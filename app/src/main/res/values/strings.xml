@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AudioRecorder Harness</string>
+    <string name="action_settings">Settings</string>
+</resources>

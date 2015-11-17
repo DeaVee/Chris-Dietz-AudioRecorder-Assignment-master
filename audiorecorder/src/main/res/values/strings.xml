@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Audio Recorder</string>
+
+    <string name="record_message">Press play to start recording.</string>
+    <string name="play">Play</string>
+    <string name="stop">Stop</string>
+    <string name="pause">Pause</string>
+
+    <string name="time">%1$02d:%2$02d:%3$02d</string>
+</resources>
