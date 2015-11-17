@@ -18,7 +18,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle onSavedInstanceState) {
         super.onCreate(onSavedInstanceState);
-        recorder = new AudioRecorder();
+        recorder = new AudioRecorder(this);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.xappmedia.audiorecorder;
 import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.test.AndroidTestCase;
 
 import junit.framework.TestCase;
 
@@ -12,12 +13,11 @@ import java.io.IOException;
 /**
  *
  */
-public class UtilsTest extends TestCase {
+public class UtilsTest extends AndroidTestCase {
 
     public void test_getDefaultExternalFilePath() {
-        String path = Utils.getDefaultExternalFilePath();
-        assertEquals(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath(), path);
-        assertTrue(new File(path).isDirectory());
+        String path = Utils.getDefaultExternalFilePath(getContext());
+        assertEquals(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath() + "/" + BuildConfig.APPLICATION_ID, path);
     }
 
     public void test_getExtensionString() {

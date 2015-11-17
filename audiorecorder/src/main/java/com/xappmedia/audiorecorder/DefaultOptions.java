@@ -1,5 +1,6 @@
 package com.xappmedia.audiorecorder;
 
+import android.content.Context;
 import android.media.MediaRecorder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -23,7 +24,7 @@ class DefaultOptions extends AudioRecorderOptions {
      */
     String fileLocation;
 
-    public DefaultOptions(@Nullable AudioRecorderOptions o) {
+    public DefaultOptions(Context ctx, @Nullable AudioRecorderOptions o) {
         // Right now MediaRecorder.OutputFormat.THREE_GPP is the only format that is supported, so just use that.
         this.fileName = (o == null || TextUtils.isEmpty(o.fileName)) ?
                 generateDefaultFileName(MediaRecorder.OutputFormat.THREE_GPP) :
@@ -33,6 +34,6 @@ class DefaultOptions extends AudioRecorderOptions {
             this.fileName += getExtension(MediaRecorder.OutputFormat.THREE_GPP);
         }
 
-        this.fileLocation = getDefaultExternalFilePath() + "/" + this.fileName;
+        this.fileLocation = getDefaultExternalFilePath(ctx) + "/" + this.fileName;
     }
 }

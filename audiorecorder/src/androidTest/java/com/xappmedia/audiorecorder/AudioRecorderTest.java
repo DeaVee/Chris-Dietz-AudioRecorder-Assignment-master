@@ -17,7 +17,7 @@ public class AudioRecorderTest extends AndroidTestCase {
     public void test_startAndStopState() {
         final TestRecorderListener listener = new TestRecorderListener();
 
-        final AudioRecorder recorder = new AudioRecorder();
+        final AudioRecorder recorder = new AudioRecorder(getContext());
         recorder.addRecorderListener(listener);
         recorder.startRecording(null);
 
@@ -35,7 +35,7 @@ public class AudioRecorderTest extends AndroidTestCase {
         assertEquals(1, listener.startCalledHitRate);
         assertEquals(0, listener.pauseCalledHitRate);
         assertEquals(1, listener.stopCalledHitRate);
-        assertEquals(5, listener.seconds);
+        assertTrue(listener.seconds == 4 || listener.seconds == 5); // Race condition could actually make this either 4 or 5 depending on the timings.
         assertTrue(listener.errorsCaptured.isEmpty());
         assertTrue(recorder.isStopped());
         assertFalse(recorder.isRecording());
@@ -58,7 +58,7 @@ public class AudioRecorderTest extends AndroidTestCase {
         final AudioRecorderOptions options = new AudioRecorderOptions();
         options.fileName = "pauseFile";
 
-        final AudioRecorder recorder = new AudioRecorder();
+        final AudioRecorder recorder = new AudioRecorder(getContext());
         recorder.addRecorderListener(listener);
         recorder.startRecording(options);
 
@@ -86,7 +86,7 @@ public class AudioRecorderTest extends AndroidTestCase {
         assertEquals(1, listener.startCalledHitRate);
         assertEquals(1, listener.pauseCalledHitRate);
         assertEquals(1, listener.stopCalledHitRate);
-        assertEquals(5, listener.seconds);
+        assertTrue(listener.seconds == 4 || listener.seconds == 5); // Race condition could actually make this either 4 or 5 depending on the timings.
         assertTrue(listener.errorsCaptured.isEmpty());
         assertTrue(recorder.isStopped());
         assertFalse(recorder.isRecording());

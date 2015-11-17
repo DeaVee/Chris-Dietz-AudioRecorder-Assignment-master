@@ -1,5 +1,6 @@
 package com.xappmedia.audiorecorder;
 
+import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -16,11 +17,20 @@ import java.util.Locale;
 class Utils {
 
     /**
+     * Retrieves the main application name of the app
+     * @return
+     *      String value of the application.
+     */
+    static String getPackageLabel(Context ctx) {
+        return ctx.getPackageName();
+    }
+
+    /**
      * Returns the default external directory location for the file to be saved.
      */
-    static String getDefaultExternalFilePath() {
+    static String getDefaultExternalFilePath(Context ctx) {
         // TODO: Need to handle situations where the environmental path is not accessible.
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath() + "/" + getPackageLabel(ctx);
     }
 
     /**

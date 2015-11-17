@@ -2,6 +2,7 @@
     <string name="app_name">Audio Recorder</string>
 
     <string name="record_message">Press play to start recording.</string>
+    <string name="recordings">Recordings</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
     <string name="pause">Pause</string>

@@ -1,24 +1,24 @@
 package com.xappmedia.audiorecorder;
 
+import android.content.Context;
 import android.media.MediaRecorder;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.xappmedia.audiorecorder.exceptions.AudioRecorderError;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import static com.xappmedia.audiorecorder.Utils.*;
 
+/**
+ * Audio Recorder can be used to handle all states regarding recording from a device microphone.
+ *
+ * By default, all recordings will be places in the external storage under the public music folder with a
+ * sub-directory that is the application package name.
+ */
 public class AudioRecorder {
 
     private static final String TAG = "AudioRecorder";
@@ -42,14 +42,16 @@ public class AudioRecorder {
     private final MediaRecorder mediaRecorder;
     private final Timer timer;
 
+    private Context appContext;
     private DefaultOptions currentRecordingOptions;
     private int state;
 
-    public AudioRecorder() {
+    public AudioRecorder(Context ctx) {
         mediaRecorder = new MediaRecorder();
         recorderListener = new CompoundRecorderListener();
         timer = new Timer();
         state = STATE_STOPPED;
+        appContext = ctx.getApplicationContext();
     }
 
     /**
@@ -153,8 +155,8 @@ public class AudioRecorder {
     private void startInternal(AudioRecorderOptions options) {
         try {
             if (state != STATE_PAUSED) {
-                currentRecordingOptions = new DefaultOptions(options);
-                prepRecorder(mediaRecorder, currentRecordingOptions);
+                currentRecordingOptions = new DefaultOptions(appContext, options);
+                prepRecorder(appContext, mediaRecorder, currentRecordingOptions);
                 mediaRecorder.prepare();
             }
             state = STATE_RECORDING;
@@ -191,8 +193,8 @@ public class AudioRecorder {
         mediaRecorder.release();
     }
 
-    private static void prepRecorder(@NonNull MediaRecorder recorder, @Nullable AudioRecorderOptions o) throws IOException {
-        final DefaultOptions newOptions = new DefaultOptions(o);
+    private static void prepRecorder(@NonNull Context appContext, @NonNull MediaRecorder recorder, @Nullable AudioRecorderOptions o) throws IOException {
+        final DefaultOptions newOptions = new DefaultOptions(appContext, o);
         File file = createFileIfNecessary(newOptions.fileLocation);
         // TODO: Need validation for this file location in case the user chose something weird.
         recorder.setOutputFile(file.getAbsolutePath());
