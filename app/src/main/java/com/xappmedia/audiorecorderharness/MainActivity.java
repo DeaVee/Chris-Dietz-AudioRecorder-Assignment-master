@@ -52,10 +52,6 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.FileA
         listView.setItemAnimator(new DefaultItemAnimator());
         listView.setAdapter(listAdapter);
 
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnPreparedListener(this);
-
-
         File mainFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), getPackageName());
         if (!mainFolder.exists() && mainFolder.mkdirs()) {
             Snackbar.make(listView, "There was an error creating the recordings directory.", Snackbar.LENGTH_SHORT).show();
@@ -68,8 +64,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.FileA
     @Override
     public void onStop() {
         super.onStop();
-        stopPlayer();
-        mediaPlayer.release();
+        releasePlayer();
     }
 
     @Override
@@ -96,21 +91,36 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.FileA
         }
     }
 
-    private void stopPlayer() {
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
+    private void releasePlayer() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
         }
+        mediaPlayer = null;
+    }
 
-        mediaPlayer.reset();
+    private void stopPlayer() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.reset();
+        }
+        mediaPlayer = null;
     }
 
     private void play(File file) {
         stopPlayer();
         try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
             Snackbar.make(listView, "There was an error playing the file " + file.getName(), Snackbar.LENGTH_SHORT).show();
+            mediaPlayer = null;
         }
     }
 
