@@ -22,7 +22,7 @@ class Utils {
      *      String value of the application.
      */
     static String getPackageLabel(Context ctx) {
-        return ctx.getPackageName();
+        return ctx.getApplicationContext().getPackageName();
     }
 
     /**
