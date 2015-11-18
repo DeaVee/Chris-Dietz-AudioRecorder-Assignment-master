@@ -1,5 +1,8 @@
 package com.xappmedia.audiorecorder;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.xappmedia.audiorecorder.exceptions.AudioRecorderError;
 
 import java.io.File;
@@ -16,13 +19,13 @@ class CompoundRecorderListener implements RecorderListener {
         listeners = new ArrayList<>(5);
     }
 
-    void registerListener(RecorderListener listener) {
+    void registerListener(@Nullable RecorderListener listener) {
         if (listener != null) {
             listeners.add(listener);
         }
     }
 
-    void unregisterListener(RecorderListener listener) {
+    void unregisterListener(@Nullable RecorderListener listener) {
         if (listener != null) {
             listeners.remove(listener);
         }
@@ -43,14 +46,14 @@ class CompoundRecorderListener implements RecorderListener {
     }
 
     @Override
-    public void onRecorderStop(File file) {
+    public void onRecorderStop(@Nullable File file) {
         for (RecorderListener listener : listeners) {
             listener.onRecorderStop(file);
         }
     }
 
     @Override
-    public void onRecorderError(AudioRecorderError e) {
+    public void onRecorderError(@NonNull AudioRecorderError e) {
         for (RecorderListener listener : listeners) {
             listener.onRecorderError(e);
         }

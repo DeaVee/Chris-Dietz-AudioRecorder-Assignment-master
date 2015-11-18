@@ -1,5 +1,7 @@
 package com.xappmedia.audiorecorder;
 
+import android.support.annotation.NonNull;
+
 import com.xappmedia.audiorecorder.exceptions.AudioRecorderError;
 
 import java.io.File;
@@ -25,7 +27,7 @@ public class SimpleRecorderListener implements RecorderListener {
     }
 
     @Override
-    public void onRecorderError(AudioRecorderError e) {
+    public void onRecorderError(@NonNull AudioRecorderError e) {
 
     }
 

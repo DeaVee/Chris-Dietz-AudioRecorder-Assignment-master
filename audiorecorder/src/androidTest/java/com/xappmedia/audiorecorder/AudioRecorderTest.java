@@ -1,6 +1,7 @@
 package com.xappmedia.audiorecorder;
 
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.test.AndroidTestCase;
 
 import com.xappmedia.audiorecorder.exceptions.AudioRecorderError;
@@ -30,7 +31,7 @@ public class AudioRecorderTest extends AndroidTestCase {
         assertFalse(recorder.isPaused());
 
         sleep(5000);
-        recorder.stopRecording();
+        recorder.stopRecording(false);
 
         assertEquals(1, listener.startCalledHitRate);
         assertEquals(0, listener.pauseCalledHitRate);
@@ -81,7 +82,7 @@ public class AudioRecorderTest extends AndroidTestCase {
 
         sleep(5000);
 
-        recorder.stopRecording();
+        recorder.stopRecording(false);
 
         assertEquals(1, listener.startCalledHitRate);
         assertEquals(1, listener.pauseCalledHitRate);
@@ -137,7 +138,7 @@ public class AudioRecorderTest extends AndroidTestCase {
         }
 
         @Override
-        public void onRecorderError(AudioRecorderError e) {
+        public void onRecorderError(@NonNull AudioRecorderError e) {
             errorsCaptured.add(e);
         }
 

@@ -8,4 +8,6 @@
     <string name="pause">Pause</string>
 
     <string name="time">%1$02d:%2$02d:%3$02d</string>
+
+    <string name="error_recording">There was an error while recording.</string>
 </resources>

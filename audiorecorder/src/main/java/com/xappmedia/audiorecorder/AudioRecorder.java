@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaRecorder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.xappmedia.audiorecorder.exceptions.AudioRecorderError;
@@ -57,14 +58,14 @@ public class AudioRecorder {
     /**
      * Adds a recorder listener to the audio recorder library.
      */
-    public void addRecorderListener(RecorderListener listener) {
+    public void addRecorderListener(@Nullable RecorderListener listener) {
         recorderListener.registerListener(listener);
     }
 
     /**
      * Removes a specific listener from the audio recorder library.
      */
-    public void removeRecorderListener(RecorderListener listener) {
+    public void removeRecorderListener(@Nullable RecorderListener listener) {
         recorderListener.unregisterListener(listener);
     }
 
@@ -142,13 +143,16 @@ public class AudioRecorder {
 
     /**
      * Stops the recording and prepare it for another recording later.
+     *
+     * @param deleteFile
+     *      If true, then the file that was being written will be deleted upon stopping effectively canceling the operation.
      */
-    public final void stopRecording() {
+    public final void stopRecording(boolean deleteFile) {
         synchronized (this) {
             if (state == STATE_STOPPED) {
                 return;
             }
-            stopInternal();
+            stopInternal(deleteFile);
         }
     }
 
@@ -175,22 +179,31 @@ public class AudioRecorder {
         timer.pause();
     }
 
-    private void stopInternal() {
+    private void stopInternal(boolean deleteFile) {
         if (state != STATE_PAUSED) {
             mediaRecorder.stop();
         }
         state = STATE_STOPPED;
         mediaRecorder.reset();
-        recorderListener.onRecorderStop((currentRecordingOptions != null) ? new File(currentRecordingOptions.fileLocation) : null);
+        recorderListener.onRecorderStop((!deleteFile && currentRecordingOptions != null) ? new File(currentRecordingOptions.fileLocation) : null);
         timer.stop();
+
+        if (deleteFile && currentRecordingOptions != null) {
+            deleteFile(currentRecordingOptions.fileLocation);
+        }
+
         currentRecordingOptions = null;
     }
 
     private void shutdownInternal() {
         if (state == STATE_RECORDING) {
-            stopInternal();
+            stopInternal(true);
         }
         mediaRecorder.release();
+    }
+
+    private boolean deleteFile(String fileLocation) {
+        return !TextUtils.isEmpty(fileLocation) && new File(fileLocation).delete();
     }
 
     private static void prepRecorder(@NonNull Context appContext, @NonNull MediaRecorder recorder, @Nullable AudioRecorderOptions o) throws IOException {

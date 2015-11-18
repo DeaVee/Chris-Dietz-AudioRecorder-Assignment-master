@@ -3,11 +3,13 @@ package com.xappmedia.audiorecorder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xappmedia.audiorecorder.exceptions.AudioRecorderError;
 
@@ -65,9 +67,9 @@ public final class AudioRecorderDialogActivity extends AudioRecorderActivity {
 
         private void playPressed() {
             if (isRecording()) {
-                stopRecording();
+                stopRecording(false);
             } else {
-                startRecording();
+                startRecording(null);
             }
         }
 
@@ -83,12 +85,15 @@ public final class AudioRecorderDialogActivity extends AudioRecorderActivity {
 
         @Override
         public void onRecorderStop(File file) {
-            playButton.setText(R.string.play);
+            if (file != null) {
+                returnRecording(file);
+            }
         }
 
         @Override
-        public void onRecorderError(AudioRecorderError e) {
+        public void onRecorderError(@NonNull AudioRecorderError e) {
             playButton.setText(R.string.play);
+            Toast.makeText(AudioRecorderDialogActivity.this, R.string.error_recording, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -108,8 +113,7 @@ public final class AudioRecorderDialogActivity extends AudioRecorderActivity {
 
         @Override
         public void onCancel(DialogInterface dialog) {
-            setResult(RESULT_CANCELED);
-            // dismiss listener will handle the dismissal
+            cancelRecording();
         }
     }
 }

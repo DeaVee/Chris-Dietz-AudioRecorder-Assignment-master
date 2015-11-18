@@ -1,10 +1,15 @@
 package com.xappmedia.audiorecorderharness;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -13,7 +18,16 @@ import android.view.MenuItem;
 import com.xappmedia.audiorecorder.AudioRecorder;
 import com.xappmedia.audiorecorder.AudioRecorderDialogActivity;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.File;
+import java.io.IOException;
+
+public class MainActivity extends AppCompatActivity implements FileAdapter.FileAdapterListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+
+    private static final int RESULT_CODE_RECORDER = 1;
+
+    private RecyclerView listView;
+    private FileAdapter listAdapter;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,33 +42,78 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 final Intent intent = new Intent(view.getContext(), AudioRecorderDialogActivity.class);
-                startActivity(intent);
-
-                Snackbar.make(view, "Hello World", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivityForResult(intent, RESULT_CODE_RECORDER);
             }
         });
+
+        listAdapter = new FileAdapter();
+        listAdapter.setListener(this);
+
+        listView = (RecyclerView) findViewById(R.id.fileList);
+        listView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        listView.setItemAnimator(new DefaultItemAnimator());
+        listView.setAdapter(listAdapter);
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(this);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onStop() {
+        super.onStop();
+        stopPlayer();
+        mediaPlayer.release();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RESULT_CODE_RECORDER) {
+            if (resultCode == RESULT_OK) {
+                final Uri fileUri = data.getParcelableExtra(AudioRecorderDialogActivity.RESULT_ARG_FILE_URI);
+                File file = new File(fileUri.getPath());
+                listAdapter.addFile(file);
+            }
+        }
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    @Override
+    public void onFileSelected(File file) {
+        play(file);
+    }
+
+    @Override
+    public void onFileDelete(File file) {
+        stopPlayer();
+        if (file.delete()) {
+            listAdapter.removeFile(file);
+        }
+    }
+
+    private void stopPlayer() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
         }
 
-        return super.onOptionsItemSelected(item);
+        mediaPlayer.reset();
+    }
+
+    private void play(File file) {
+        stopPlayer();
+        try {
+            mediaPlayer.setDataSource(file.getAbsolutePath());
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Snackbar.make(listView, "There was an error playing the file " + file.getName(), Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mp.start();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mp.reset();
     }
 }

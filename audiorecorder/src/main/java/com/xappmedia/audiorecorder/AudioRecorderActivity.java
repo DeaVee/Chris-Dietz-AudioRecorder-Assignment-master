@@ -1,8 +1,13 @@
 package com.xappmedia.audiorecorder;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+
+import java.io.File;
 
 /**
  * An AudioRecorderActivity is a basic Activity that can be used to record audio.
@@ -12,6 +17,12 @@ import android.support.v7.app.AppCompatActivity;
  * This can be extended with a custom UI to handle features enabled by the audiorecorder.
  */
 public class AudioRecorderActivity extends AppCompatActivity {
+
+    /**
+     * Activities that call this from {@link android.app.Activity#startActivityForResult(Intent, int)}
+     * can look for the result in this argument on a RESULT_OK.
+     */
+    public static final String RESULT_ARG_FILE_URI = "fileUri";
 
     private AudioRecorder recorder;
 
@@ -24,7 +35,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        recorder.stopRecording();
+        stopRecording(true);
     }
 
     @Override
@@ -33,26 +44,76 @@ public class AudioRecorderActivity extends AppCompatActivity {
         recorder.shutdown();
     }
 
-    protected void addRecorderListener(RecorderListener listener) {
+    /**
+     * Canceling an ongoing recording and returns the activity.
+     */
+    protected void cancelRecording() {
+        stopRecording(true);
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    /**
+     * Child activities can call this with a recorded file to set the result of the Activity and return the
+     * listed file.
+     * @param file
+     *      File to save.
+     */
+    protected void returnRecording(@NonNull File file) {
+        Uri fileUri = Uri.fromFile(file);
+        final Intent resultIntent = new Intent();
+        resultIntent.putExtra(RESULT_ARG_FILE_URI, fileUri);
+        setResult(RESULT_OK, resultIntent);
+        finish();
+    }
+
+    /**
+     * Adds a recorder listener to the recorder.
+     * @param listener
+     *      Listener to add
+     */
+    protected void addRecorderListener(@NonNull RecorderListener listener) {
         recorder.addRecorderListener(listener);
     }
 
-    protected void removeListener(RecorderListener listener) {
+    /**
+     * Removes a recorder listener from the recorder.
+     * @param listener
+     *      Listener to remove
+     */
+    protected void removeListener(@NonNull RecorderListener listener) {
         recorder.removeRecorderListener(listener);
     }
 
+    /**
+     * Returns true if the user is currently recording a message.
+     */
     protected boolean isRecording() {
         return recorder.isRecording();
     }
 
-    protected void startRecording() {
-        recorder.startRecording(null);
+    /**
+     * Start a recording.
+     * @param options
+     *      Options to give the recorder for the specific recording.
+     */
+    protected void startRecording(AudioRecorderOptions options) {
+        recorder.startRecording(options);
     }
 
-    protected void stopRecording() {
-        recorder.stopRecording();
+
+    /**
+     * Stop the current recording.
+     * @param deleteFile
+     *      Pass true to delete the file upon stopping.
+     */
+    protected void stopRecording(boolean deleteFile) {
+        recorder.stopRecording(deleteFile);
     }
 
+    /**
+     * Pause the recording at the current position. Starting will restart the recording at it's current spot.
+     */
     protected void pauseRecording() {
         recorder.pauseRecording();
     }
