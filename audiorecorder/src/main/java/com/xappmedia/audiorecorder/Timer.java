@@ -27,6 +27,10 @@ class Timer {
         stop();
     }
 
+    /**
+     * Start the timer and start giving feedback to the provided listener.  If the timer is
+     * already started, then this will restart the timer.
+     */
     public void start(TimerListener listener) {
         if (state == STATE_STARTED) {
             // Restarting in this case.
@@ -41,6 +45,10 @@ class Timer {
         sUIHandler.postDelayed(currentRunnable, 1000);
     }
 
+    /**
+     * Stop the timer at the current position.  The next time the timer is started, the
+     * listener provided will get the callbacks with the current time.
+     */
     public void pause() {
         if (currentRunnable != null) {
             sUIHandler.removeCallbacks(currentRunnable);
@@ -49,6 +57,9 @@ class Timer {
         state = STATE_PAUSED;
     }
 
+    /**
+     * Stop the timer completely.  This will restart next time you start.
+     */
     public void stop() {
         if (currentRunnable != null) {
             sUIHandler.removeCallbacks(currentRunnable);

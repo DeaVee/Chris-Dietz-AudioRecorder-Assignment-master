@@ -5,8 +5,6 @@ import android.media.MediaRecorder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.io.File;
-
 import static com.xappmedia.audiorecorder.Utils.generateDefaultFileName;
 import static com.xappmedia.audiorecorder.Utils.getDefaultExternalFilePath;
 import static com.xappmedia.audiorecorder.Utils.getExtension;

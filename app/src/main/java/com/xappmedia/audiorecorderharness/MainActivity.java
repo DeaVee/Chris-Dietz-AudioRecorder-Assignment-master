@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,10 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import com.xappmedia.audiorecorder.AudioRecorder;
 import com.xappmedia.audiorecorder.AudioRecorderDialogActivity;
 
 import java.io.File;
@@ -56,6 +54,15 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.FileA
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnPreparedListener(this);
+
+
+        File mainFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), getPackageName());
+        if (!mainFolder.exists() && mainFolder.mkdirs()) {
+            Snackbar.make(listView, "There was an error creating the recordings directory.", Snackbar.LENGTH_SHORT).show();
+        } else {
+            File[] filesList = mainFolder.listFiles();
+            listAdapter.addFiles(filesList);
+        }
     }
 
     @Override

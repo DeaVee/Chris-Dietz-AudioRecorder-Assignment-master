@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
@@ -19,29 +21,43 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         void onFileDelete(File file);
     }
 
-    private final ArrayList<File> files;
+    private final ArrayList<File> mFiles;
 
-    private FileAdapterListener listener;
+    private FileAdapterListener mListener;
 
     public FileAdapter() {
-        files = new ArrayList<>();
+        mFiles = new ArrayList<>();
     }
 
     public void setListener(FileAdapterListener listener) {
-        this.listener = listener;
+        mListener = listener;
     }
 
     public void addFile(File file) {
         if (file != null) {
-            files.add(file);
-            notifyItemInserted(files.size());
+            mFiles.add(file);
+            notifyItemInserted(mFiles.size());
+        }
+    }
+
+    public void addFiles(File[] files) {
+        if (files != null) {
+            addFiles(Arrays.asList(files));
+        }
+    }
+
+    public void addFiles(Collection<File> files) {
+        if (files != null) {
+            int startIndex = mFiles.size();
+            mFiles.addAll(files);
+            notifyItemRangeInserted(startIndex, mFiles.size());
         }
     }
 
     public void removeFile(File file) {
-        if (file != null && files.contains(file)) {
-            int index = files.indexOf(file);
-            files.remove(file);
+        if (file != null && mFiles.contains(file)) {
+            int index = mFiles.indexOf(file);
+            mFiles.remove(file);
             notifyItemRemoved(index);
         }
     }
@@ -54,12 +70,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     @Override
     public void onBindViewHolder(FileViewHolder holder, int position) {
-        holder.bind(files.get(position));
+        holder.bind(mFiles.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return files.size();
+        return mFiles.size();
     }
 
     class FileViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
@@ -81,13 +97,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
         @Override
         public void onClick(View v) {
-            if (listener != null) {
+            if (mListener != null) {
                 switch (v.getId()) {
                     case R.id.btnPlay:
-                        listener.onFileSelected(item);
+                        mListener.onFileSelected(item);
                         break;
                     case R.id.btnDelete:
-                        listener.onFileDelete(item);
+                        mListener.onFileDelete(item);
                         break;
                 }
             }

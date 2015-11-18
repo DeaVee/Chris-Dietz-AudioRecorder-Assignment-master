@@ -1,6 +1,5 @@
 package com.xappmedia.audiorecorder;
 
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 

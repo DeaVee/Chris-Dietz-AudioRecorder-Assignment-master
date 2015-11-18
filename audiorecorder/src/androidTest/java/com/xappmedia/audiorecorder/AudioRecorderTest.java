@@ -1,6 +1,5 @@
 package com.xappmedia.audiorecorder;
 
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.test.AndroidTestCase;
 

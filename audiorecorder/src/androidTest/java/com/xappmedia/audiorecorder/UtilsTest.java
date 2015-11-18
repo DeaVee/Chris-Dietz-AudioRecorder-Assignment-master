@@ -1,11 +1,8 @@
 package com.xappmedia.audiorecorder;
 
-import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.test.AndroidTestCase;
-
-import junit.framework.TestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +27,8 @@ public class UtilsTest extends AndroidTestCase {
         assertEquals("", extension);
 
         fileName = null;
-        extension = Utils.getExtension((String) null);
+        //noinspection ConstantConditions  Useless LINT expression.
+        extension = Utils.getExtension(fileName);
         assertEquals("", extension);
     }
 
@@ -40,7 +38,7 @@ public class UtilsTest extends AndroidTestCase {
 
         try {
             extension = Utils.generateDefaultFileName(Integer.MIN_VALUE);
-            assertFalse("Exception was not thrown for invalid output format.", true);
+            assertFalse("Exception was not thrown for invalid output format and got " + extension, true);
         } catch (Exception e) {
             // worked.
         }
@@ -54,7 +52,7 @@ public class UtilsTest extends AndroidTestCase {
 
         try {
             fileName = Utils.generateDefaultFileName(Integer.MIN_VALUE);
-            assertFalse("Exception was not thrown for invalid output format.", true);
+            assertFalse("Exception was not thrown for invalid output format and got " + fileName, true);
         } catch (Exception e) {
             // worked
         }
@@ -75,6 +73,7 @@ public class UtilsTest extends AndroidTestCase {
             assertFalse("IOException while trying to create file: " + e.getMessage(), true);
         } finally {
             if (createdFile != null) {
+                //noinspection ResultOfMethodCallIgnored  It's a shame if it doesn't get deleted, but not a huge concern for this test.
                 createdFile.delete();
             }
         }

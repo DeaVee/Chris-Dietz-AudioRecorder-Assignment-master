@@ -97,8 +97,12 @@ class Utils {
      * If the path is a file, then the file will attempted to be created as-is.
      *
      * @param path
+     *      The full path the the file to be created.
      * @return
+     *      The created file.
+     *
      * @throws IOException
+     *      Thrown if there is an error creating the file on the file system.
      */
     static File createFileIfNecessary(String path) throws IOException {
         File file = new File(path);
