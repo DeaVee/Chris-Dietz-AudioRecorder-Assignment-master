@@ -1,6 +1,5 @@
 package com.xappmedia.audiorecorder;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +10,8 @@ import java.io.File;
 
 /**
  * An AudioRecorderActivity is a basic Activity that can be used to record audio.
- * To use this activity, just start it with {@link Context#startActivityForResult(Intent, int)}
- * The audio will be sent back as a URI in with the returning intent.
+ * To use this activity, just start it with {@link android.app.Activity#startActivityForResult(Intent, int)}
+ * The audio will be sent back as a URI in with the returning intent if it is saved.
  *
  * This can be extended with a custom UI to handle features enabled by the audiorecorder.
  */
